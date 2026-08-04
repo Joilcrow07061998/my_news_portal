@@ -1,0 +1,35 @@
+{% extends 'flatpages/default.html' %}
+
+<!-- Загружаем файл censor_filter.py -->
+{% load censor_filter %}
+{% block title %}
+Новости
+{% endblock title %}
+
+{% block content %}
+<h1>Все новости</h1>
+
+<h3>Всего новостей: {{ news|length }}</h3>
+<hr>
+
+{% if news %}
+    {% for post in news %}
+        <div style="margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+            <h3>
+                <!-- Применяем фильтр censor (имя совпадает с именем функции) -->
+                <a href="/news/{{ post.id }}">{{ post.headline|censor }}</a>
+            </h3>
+
+            <small>Дата публикации: {{ post.created_at|date:"d.m.Y" }}</small>
+
+            <p style="margin-top: 10px;">{{ post.body|censor|truncatewords:20 }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <h2>Новостей пока нет!</h2>
+{% endif %}
+
+<br>
+<a href="/">Вернуться на главную</a>
+
+{% endblock content %}
