@@ -13,6 +13,7 @@
 <hr>
 
 {% if news %}
+    <!-- Вывод списка новостей -->
     {% for post in news %}
         <div style="margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
             <h3>
@@ -25,6 +26,32 @@
             <p style="margin-top: 10px;">{{ post.body|censor|truncatewords:20 }}</p>
         </div>
     {% endfor %}
+
+    <div class="pagination">
+    <span class="step-links">
+        <!-- Первая страница -->
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; первая</a>
+            <a href="?page={{ page_obj.previous_page_number }}">предыдущая</a>
+        {% endif %}
+
+        <!-- Номера страниц (ближайшие) -->
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <strong>{{ num }}</strong>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Последняя страница -->
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">следующая</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">последняя &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
 {% else %}
     <h2>Новостей пока нет!</h2>
 {% endif %}

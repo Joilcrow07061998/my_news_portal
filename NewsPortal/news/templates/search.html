@@ -1,0 +1,26 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+<h1>Поиск новостей</h1>
+
+<form method="get">
+    {{ filterset.form.as_p }}
+    <button type="submit">Найти</button>
+</form>
+
+<hr>
+
+{% if posts %}
+    {% for post in posts %}
+        <h3><a href="/news/{{ post.id }}">{{ post.headline }}</a></h3>
+        <p>{{ post.body|truncatewords:20 }}</p>
+        <small>Автор: {{ post.author.user.username }} | {{ post.created_at|date:"d.m.Y" }}</small>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>Новостей не найдено.</p>
+{% endif %}
+
+<a href="/news/">Назад к списку</a>
+
+{% endblock content %}
