@@ -1,10 +1,15 @@
 from django.http import HttpResponse
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
-from .models import Post
+from .models import Post, Author
 from .forms import PostForm
 from .filters import PostFilter
-from django.shortcuts import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
+from django.contrib.auth.models import Group
+
+
 
 
 class PostList(ListView):
@@ -21,6 +26,9 @@ class PostList(ListView):
             post.formatted_date = post.created_at.strftime('%m/%d/%Y')
             formatted_news.append(post)
         context['formatted_news'] = formatted_news
+        context['is_not_author'] = not self.request.user.groups.filter(
+            name='authors'
+        ).exists()
         return context
 
     def get_queryset(self):
@@ -55,56 +63,43 @@ class SearchView(ListView):
         return context
 
 
-class NewsCreate(CreateView):
+class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = 'post_edit.html'
+    permission_required = 'news.add_post'
 
     def form_valid(self, form):
+        author, created = Author.objects.get_or_create(user=self.request.user)
         post = form.save(commit=False)
-        post.post_type = 'NW'
-        return super().form_valid(form)
+        post.post_type = self.kwargs.get('post_type', 'NW')
+        post.author = author
+        post.save()
+        return redirect('post_detail', pk=post.pk)
 
-    def get_success_url(self):
-        return reverse('post_detail', kwargs={'pk': self.object.pk})
-
-
-class NewsUpdate(UpdateView):
+class PostUpdate(LoginRequiredMixin,PermissionRequiredMixin, UpdateView):
     model = Post
     form_class = PostForm
     template_name = 'post_edit.html'
-    success_url = reverse_lazy('post_list')
+    permission_required = 'news.change_post'
 
-
-class NewsDelete(DeleteView):
-    model = Post
-    success_url = reverse_lazy('post_list')
-    template_name = 'post_delete.html'
-
-
-class ArticleCreate(CreateView):
-    model = Post
-    form_class = PostForm
-    template_name = 'post_edit.html'
 
 
     def form_valid(self, form):
-        post = form.save(commit=False)
-        post.post_type = 'AR'
-        return super().form_valid(form)
+        post = form.save()
+        return redirect('post_detail', pk=post.pk)
 
-    def get_success_url(self):
-        return reverse('post_detail', kwargs={'pk': self.object.pk})
-
-
-class ArticleUpdate(UpdateView):
-    model = Post
-    form_class = PostForm
-    template_name = 'post_edit.html'
-    success_url = reverse_lazy('post_list')
-
-
-class ArticleDelete(DeleteView):
+class PostDelete(LoginRequiredMixin,PermissionRequiredMixin, DeleteView):
     model = Post
     success_url = reverse_lazy('post_list')
     template_name = 'post_delete.html'
+    permission_required = 'news.delete_post'
+
+@login_required
+def become_author(request):
+    authors_group = Group.objects.get(name='authors')
+
+    if not request.user.groups.filter(name='authors').exists():
+        authors_group.user_set.add(request.user)
+
+    return redirect('post_list')
