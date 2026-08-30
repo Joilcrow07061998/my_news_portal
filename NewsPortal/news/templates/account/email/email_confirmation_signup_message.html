@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подтверждение регистрации</title>
+</head>
+
+<body style="
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f8;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #333333;
+">
+
+<div style="
+    max-width: 600px;
+    margin: 40px auto;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+">
+
+    <!-- Шапка -->
+    <div style="
+        background-color: #007bff;
+        padding: 25px;
+        text-align: center;
+    ">
+        <h1 style="
+            margin: 0;
+            color: #ffffff;
+            font-size: 28px;
+        ">
+            News Portal
+        </h1>
+
+        <p style="
+            margin: 8px 0 0;
+            color: #eaf3ff;
+            font-size: 15px;
+        ">
+            Новости, которые стоит прочитать
+        </p>
+    </div>
+
+    <!-- Основной текст -->
+    <div style="padding: 35px;">
+
+        <h2 style="
+            margin-top: 0;
+            color: #222222;
+        ">
+            Добро пожаловать, {{ user.username }}!
+        </h2>
+
+        <p style="font-size: 16px; line-height: 1.6;">
+            Спасибо за регистрацию на <strong>News Portal</strong>.
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6;">
+            Вы почти у цели. Подтвердите свой адрес электронной почты,
+            чтобы завершить регистрацию и получить доступ ко всем
+            возможностям нашего новостного портала.
+        </p>
+
+        <div style="text-align: center; margin: 30px 0;">
+
+            <a href="{{ activate_url }}" style="
+                display: inline-block;
+                padding: 13px 28px;
+                background-color: #007bff;
+                color: #ffffff;
+                text-decoration: none;
+                border-radius: 6px;
+                font-size: 16px;
+                font-weight: bold;
+            ">
+                Подтвердить регистрацию
+            </a>
+
+        </div>
+
+        <p style="
+            font-size: 14px;
+            color: #777777;
+            line-height: 1.5;
+        ">
+            Если вы не регистрировались на News Portal, просто
+            проигнорируйте это письмо.
+        </p>
+
+    </div>
+
+    <!-- Подвал -->
+    <div style="
+        padding: 18px 35px;
+        background-color: #f8f9fa;
+        text-align: center;
+        font-size: 13px;
+        color: #888888;
+    ">
+        News Portal · Спасибо, что вы с нами
+    </div>
+
+</div>
+
+</body>
+</html>

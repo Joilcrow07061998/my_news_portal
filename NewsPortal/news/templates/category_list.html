@@ -1,0 +1,17 @@
+<h1>Категории</h1>
+
+{% for category in categories %}
+    <p>
+        {{ category.name }}
+
+        {% if user.is_authenticated %}
+            {% if user in category.subscribers.all %}
+                <button disabled>Вы подписаны</button>
+            {% else %}
+                <a href="{% url 'news:subscribe_category' category.pk %}">
+                    <button>Подписаться</button>
+                </a>
+            {% endif %}
+        {% endif %}
+    </p>
+{% endfor %}

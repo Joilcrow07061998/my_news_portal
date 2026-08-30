@@ -1,13 +1,18 @@
-from django.http import HttpResponse
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Post, Author
+from .models import Post, Author, Category
 from .forms import PostForm
 from .filters import PostFilter
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.models import Group
+from django.core.mail import send_mail
+from django.utils.html import strip_tags
+from django.template.loader import render_to_string
+
+
+
 
 
 
@@ -75,7 +80,12 @@ class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         post.post_type = self.kwargs.get('post_type', 'NW')
         post.author = author
         post.save()
-        return redirect('post_detail', pk=post.pk)
+        form.save_m2m()  # Сохранить связи many-to-many (категории)
+        
+        # Отправить уведомления подписчикам
+        notify_subscribers(post)
+        
+        return redirect('news:post_detail', pk=post.pk)
 
 class PostUpdate(LoginRequiredMixin,PermissionRequiredMixin, UpdateView):
     model = Post
@@ -87,7 +97,7 @@ class PostUpdate(LoginRequiredMixin,PermissionRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         post = form.save()
-        return redirect('post_detail', pk=post.pk)
+        return redirect('news:post_detail', pk=post.pk)
 
 class PostDelete(LoginRequiredMixin,PermissionRequiredMixin, DeleteView):
     model = Post
@@ -102,4 +112,46 @@ def become_author(request):
     if not request.user.groups.filter(name='authors').exists():
         authors_group.user_set.add(request.user)
 
-    return redirect('post_list')
+    return redirect('news:post_list')
+
+class CategoryList(LoginRequiredMixin, ListView):
+    model = Category
+    template_name = 'category_list.html'
+    context_object_name = 'categories'
+
+
+@login_required
+def subscribe_category(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+    category.subscribers.add(request.user)
+
+    return redirect('news:categories')
+
+def notify_subscribers(post):
+    categories = post.categories.all()
+
+    for category in categories:
+        subscribers = category.subscribers.all()
+
+        for subscriber in subscribers:
+            html_message = render_to_string(
+                'email_notification.html',
+                {
+                    'post': post,
+                    'subscriber': subscriber,
+                }
+            )
+
+            send_mail(
+                subject=post.headline,
+                message=strip_tags(html_message),
+                from_email='denisboreicko@yandex.by',
+                recipient_list=[subscriber.email],
+                html_message=html_message,
+                fail_silently=False,
+            )
+
+
+
+
+

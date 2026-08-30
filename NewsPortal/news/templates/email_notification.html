@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.headline }}</title>
+</head>
+
+<body style="
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f8;
+    font-family: Arial, Helvetica, sans-serif;
+">
+
+<div style="
+    max-width: 600px;
+    margin: 40px auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+">
+
+    <!-- Шапка -->
+    <div style="
+        background-color: #212529;
+        padding: 25px 30px;
+        text-align: center;
+    ">
+        <h1 style="
+            margin: 0;
+            color: #ffffff;
+            font-size: 24px;
+        ">
+            News Portal
+        </h1>
+
+        <p style="
+            margin: 8px 0 0;
+            color: #adb5bd;
+            font-size: 14px;
+        ">
+            Новая публикация
+        </p>
+    </div>
+
+    <!-- Основной контент -->
+    <div style="padding: 30px;">
+
+        <p style="
+            margin-top: 0;
+            color: #495057;
+            font-size: 16px;
+        ">
+            Здравствуй, <strong>{{ subscriber.username }}</strong>!
+        </p>
+
+        <p style="
+            color: #495057;
+            font-size: 15px;
+            line-height: 1.6;
+        ">
+            В категории, на которую ты подписан, появилась новая публикация.
+        </p>
+
+        <!-- Заголовок статьи -->
+        <h2 style="
+            margin-top: 25px;
+            margin-bottom: 15px;
+            color: #212529;
+            font-size: 24px;
+        ">
+            {{ post.headline }}
+        </h2>
+
+        <!-- Превью -->
+        <div style="
+            padding: 18px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #0d6efd;
+            border-radius: 6px;
+            color: #495057;
+            font-size: 15px;
+            line-height: 1.6;
+        ">
+            {{ post.body|slice:":50" }}...
+        </div>
+
+        <!-- Кнопка -->
+        <div style="
+            text-align: center;
+            margin-top: 30px;
+        ">
+            <a href="http://127.0.0.1:8000/news/{{ post.pk }}/"
+               style="
+                   display: inline-block;
+                   padding: 12px 24px;
+                   background-color: #0d6efd;
+                   color: #ffffff;
+                   text-decoration: none;
+                   border-radius: 6px;
+                   font-size: 15px;
+                   font-weight: bold;
+               ">
+                Читать статью
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Подвал -->
+    <div style="
+        padding: 20px 30px;
+        background-color: #f8f9fa;
+        text-align: center;
+        color: #868e96;
+        font-size: 12px;
+    ">
+        Вы получили это письмо, потому что подписаны на эту категорию.
+    </div>
+
+</div>
+
+</body>
+</html>
