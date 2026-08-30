@@ -11,19 +11,23 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+from dotenv import load_dotenv
 
 from django.conf.global_settings import AUTHENTICATION_BACKENDS
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / '.env')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-hj=hmz-b66&!a5j#74cld(i!l)o%_ghuk+rk*@+p=lm7z05@t8'
-
+SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -158,10 +162,10 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'
 ACCOUNT_FORMS = {'signup': 'news.models.BasicSignupForm'}
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = False
 
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = '465'
-EMAIL_HOST_USER = 'denisboreicko'
-EMAIL_HOST_PASSWORD = 'fynnrscurvvhfqib'
-EMAIL_USE_SSL = True
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 465))
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'True') == 'True'
 
-DEFAULT_FROM_EMAIL = 'denisboreicko@yandex.by'
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
