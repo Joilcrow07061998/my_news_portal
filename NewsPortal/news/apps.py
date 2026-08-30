@@ -1,3 +1,5 @@
+import os
+
 from django.apps import AppConfig
 
 
@@ -6,5 +8,6 @@ class NewsConfig(AppConfig):
     name = 'news'
 
     def ready(self):
-        from .scheduler import start
-        start()
+        if os.environ.get('RUN_MAIN') == 'true':
+            from .scheduler import start
+            start()

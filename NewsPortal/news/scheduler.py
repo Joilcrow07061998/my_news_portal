@@ -10,8 +10,8 @@ def start():
         send_weekly_newsletter,
         'interval',
         weeks=1,
+        id='weekly_newsletter',
+        replace_existing=True,
     )
-
-
 
     scheduler.start()
