@@ -9,6 +9,9 @@ from django.utils.html import strip_tags
 
 from .models import Post
 
+from celery import shared_task
+
+
 
 def get_weekly_posts():
     week_ago = timezone.now() - timedelta(days=7)
@@ -17,7 +20,34 @@ def get_weekly_posts():
         created_at__gte=week_ago
     ).order_by('-created_at')
 
+@shared_task
+def notify_subscribers(post_id):
+    post = Post.objects.get(pk=post_id)
 
+    categories = post.categories.all()
+
+    for category in categories:
+        subscribers = category.subscribers.all()
+
+        for subscriber in subscribers:
+            html_message = render_to_string(
+                'email_notification.html',
+                {
+                    'post': post,
+                    'subscriber': subscriber,
+                }
+            )
+
+            send_mail(
+                subject=post.headline,
+                message=strip_tags(html_message),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[subscriber.email],
+                html_message=html_message,
+                fail_silently=False,
+            )
+
+@shared_task
 def send_weekly_newsletter():
     posts = get_weekly_posts()
 
