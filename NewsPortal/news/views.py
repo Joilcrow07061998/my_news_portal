@@ -8,9 +8,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.models import Group
 from .tasks import notify_subscribers
-# from django.core.mail import send_mail
-# from django.utils.html import strip_tags
-# from django.template.loader import render_to_string
 
 
 
@@ -130,31 +127,3 @@ def subscribe_category(request, pk):
 
 
 
-# def notify_subscribers(post):
-#     categories = post.categories.all()
-#
-#     for category in categories:
-#         subscribers = category.subscribers.all()
-#
-#         for subscriber in subscribers:
-#             html_message = render_to_string(
-#                 'email_notification.html',
-#                 {
-#                     'post': post,
-#                     'subscriber': subscriber,
-#                 }
-#             )
-#
-#             send_mail(
-#                 subject=post.headline,
-#                 message=strip_tags(html_message),
-#                 from_email='denisboreicko@yandex.by',
-#                 recipient_list=[subscriber.email],
-#                 html_message=html_message,
-#                 fail_silently=False,
-#             )
-#
-#
-#
-#
-#
